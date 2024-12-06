@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hava Durumu Uygulaması</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>Hava Durumu</h2>
+      <div class="weather-input">
+        <input type="text" id="city_input" placeholder="Şehir İsmini Girin">
+        <button id="searchBtn"><i class="fa fa-search"></i> Ara</button>
+      </div>
+    </div>
+    <div id="weather-data" style="display: none;">
+      <div class="weather-left">
+        <div class="card">
+          <div class="current-weather">
+            <div class="details">
+              <p>Şu An</p>
+              <h2 id="currentTemp">___&deg;C</h2>
+              <p id="currentDesc">____</p>
+            </div>
+            <div class="weather-icon">
+              <img id="currentIcon" src="" alt="Hava Durumu İkonu">
+            </div>
+          </div>
+          <hr>
+          <div class="card-footer">
+            <p id="currentDate"><i class="fa-light fa-calendar"></i> ______</p>
+            <p id="currentLocation"><i class="fa-light fa-location"></i> ______</p>
+          </div>
+                  <!-- Saatlik Hava Durumu -->
+        <div class="card">
+            <h2>Saatlik Hava Durumu</h2>
+            <div class="hourly-grid" id="hourly-grid">
+              <!-- Saatlik hava durumu kartları buraya eklenecek -->
+            </div>
+          </div>
+          <div class="card">
+            <h2>Gün Doğumu ve Gün Batışı</h2>
+            <div class="details-list">
+              <div class="detail-item"><i class="bi bi-sunrise"></i> <span id="sunrise">Gün Doğumu: ____</span></div>
+              <div class="detail-item"><i class="bi bi-sunset"></i> <span id="sunset">Gün Batışı: ____</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Nem, Basınç, Görünürlük ve Hissedilen</h2>
+          <div class="details-list">
+            <div class="detail-item"><i class="fa-solid fa-droplet"></i> <span id="humidity">Nem: ____%</span></div>
+            <div class="detail-item"><i class="fa-solid fa-gauge-high"></i> <span id="pressure">Basınç: ____ hPa</span></div>
+            <div class="detail-item"><i class="fa-solid fa-eye"></i> <span id="visibility">Görünürlük: ____ km</span></div>
+            <div class="detail-item"><i class="fa-solid fa-wind"></i> <span id="windSpeed">Rüzgar: ____ m/s</span></div>
+            <div class="detail-item"><i class="fa-solid fa-temperature-high"></i> <span id="feelsLike">Hissedilen: ____&deg;C</span></div>
+          </div>
+        </div>
+        <!-- 5 Günlük Hava Durumu -->
+        <div class="card">
+          <h2>5 Günlük Hava Durumu</h2>
+          <div class="forecast-grid" id="forecast-grid">
+            <!-- 5 günlük hava durumu kartları buraya eklenecek -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
