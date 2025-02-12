@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hava Durumu</title>
+
+    <!-- 
+        Google Fonts - Poppins
+        Modern ve temiz görünüm için Poppins fontunu kullanıyoruz
+        weight: 400 (normal), 500 (medium), 600 (semi-bold), 700 (bold)
+    -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Ana stil dosyamız - Tüm CSS tanımlamaları burada -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- 
+        Font Awesome - İkonlar için
+        Hava durumu ikonları ve diğer UI elementleri için kullanıyoruz
+        Ücretsiz ve yaygın kullanılan bir ikon kütüphanesi
+    -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <!-- 
+        Arkaplan Animasyonu
+        Sayfa arkasında hareket eden parçacıklar için
+        CSS animasyonları ile hareketli arka plan efekti
+    -->
+    <ul class="bg-animation">
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+
+    <!-- 
+        Ana İçerik Konteyneri
+        Tüm hava durumu bilgilerini içeren ana bölüm
+        Glassmorphism efekti ile modern görünüm
+    -->
+    <div class="container">
+        <!-- Sayfa Başlığı -->
+        <h1>Hava Durumu</h1>
+        
+        <!-- 
+            Arama Bölümü
+            Şehir arama input'u ve arama butonu
+            Enter tuşu ile de arama yapılabilir
+        -->
+        <div class="search-box">
+            <input type="text" id="city" placeholder="Şehir adı girin...">
+            <button onclick="getWeather()">Ara</button>
+        </div>
+
+        <!-- 
+            Hava Durumu Bilgileri
+            Başlangıçta gizli, arama sonrası görünür
+            Animasyonlu geçiş efekti ile gösterilir
+        -->
+        <div class="weather-box">
+            <!-- Hava durumu ikonu için konteyner -->
+            <div id="lottie-container"></div>
+            
+            <!-- Detaylı hava durumu bilgileri -->
+            <div class="weather-info">
+                <h2 id="cityName"></h2>
+                <div id="temperature"></div>
+                <div id="description"></div>
+                <!-- Nem ve rüzgar bilgileri -->
+                <div class="weather-details">
+                    <div class="humidity">
+                        <span>Nem</span>
+                        <span id="humidity"></span>
+                    </div>
+                    <div class="wind">
+                        <span>Rüzgar</span>
+                        <span id="wind"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 
+            3 Saatlik Tahminler
+            Sonraki 15 saat için 3'er saatlik tahminler
+            Grid yapısı ile responsive tasarım
+        -->
+        <div class="forecast-container">
+            <h3>3 Saatlik Tahminler</h3>
+            <div id="forecast" class="forecast-items"></div>
+        </div>
+    </div>
+
+    <!-- Ana JavaScript dosyamız - Tüm fonksiyonlar burada -->
+    <script src="script.js"></script>
+</body>
+</html>

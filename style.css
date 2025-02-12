@@ -1,0 +1,340 @@
+/**
+ * Hava Durumu Uygulaması - CSS
+ * Modern ve responsive tasarım için stil tanımlamaları
+ * Glassmorphism efekti ve animasyonlar içerir
+ * 
+ * Özellikler:
+ * - Responsive tasarım (mobil uyumlu)
+ * - Glassmorphism efekti
+ * - Animasyonlu geçişler
+ * - Modern renk paleti
+ * - Dinamik arka plan
+ */
+
+/* CSS Değişkenleri - Tema renkleri ve genel değerler */
+:root {
+    --primary-gradient: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    --card-bg: rgba(255, 255, 255, 0.1);
+    --glass-bg: rgba(255, 255, 255, 0.15);
+    --text-light: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.8);
+    --border-radius: 24px;
+    --shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+/* Temel sayfa stilleri - Body ve genel konteyner */
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    min-height: 100vh;
+    background: var(--primary-gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    color: var(--text-light);
+}
+
+/* Ana konteyner - Cam efektli panel */
+.container {
+    max-width: 1000px;
+    width: 100%;
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 40px;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    animation: fadeIn 0.5s ease;
+}
+
+/* Başlık stili */
+h1 {
+    color: var(--text-light);
+    text-align: center;
+    font-size: 2.8rem;
+    margin-bottom: 40px;
+    font-weight: 600;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Arama kutusu container */
+.search-box {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+/* Arama input alanı stilleri */
+.search-box input {
+    flex: 1;
+    padding: 20px;
+    border: none;
+    border-radius: var(--border-radius);
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-light);
+}
+
+.search-box button {
+    padding: 20px 40px;
+    border: none;
+    border-radius: var(--border-radius);
+    background: rgba(255, 255, 255, 0.2);
+    color: var(--text-light);
+    cursor: pointer;
+}
+
+/* Başlangıçta gizli olacak elementler */
+.weather-box,
+.forecast-container {
+    display: none;
+}
+
+/* Veri geldiğinde gösterilecek elementler */
+.weather-box.active,
+.forecast-container.active {
+    display: block;
+    animation: fadeIn 0.5s ease;
+}
+
+/* Hava durumu bilgi kutusu */
+.weather-box {
+    text-align: center;
+    padding: 40px;
+    border-radius: var(--border-radius);
+    background: var(--glass-bg);
+    margin-bottom: 40px;
+    transition: all 0.3s ease;
+}
+
+/* İkon konteyneri ve stilleri */
+#lottie-container {
+    width: 200px;
+    height: 200px;
+    margin: 0 auto 30px;
+}
+
+#lottie-container i {
+    color: var(--text-light);
+    font-size: 8rem;
+    margin: 30px 0;
+    animation: pulse 2s infinite;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+
+/* Özel ikon renkleri ve efektleri */
+.fa-sun { 
+    color: #FFD700 !important; 
+    text-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
+}
+.fa-cloud { 
+    color: #E8E8E8 !important;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
+}
+.fa-cloud-rain { 
+    color: #87CEEB !important;
+    text-shadow: 0 0 30px rgba(135, 206, 235, 0.4);
+}
+.fa-snowflake { 
+    color: #F0FFFF !important;
+    text-shadow: 0 0 30px rgba(240, 255, 255, 0.4);
+}
+.fa-bolt { 
+    color: #FFD700 !important;
+    text-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+}
+
+/* Hava durumu bilgileri stilleri */
+.weather-info {
+    text-align: center;
+}
+
+#cityName {
+    font-size: 2.5rem;
+    margin: 0;
+    font-weight: 600;
+}
+
+#temperature {
+    font-size: 4rem;
+    font-weight: 700;
+    margin: 20px 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#description {
+    font-size: 1.5rem;
+    color: var(--text-secondary);
+    text-transform: capitalize;
+    margin-bottom: 20px;
+}
+
+/* Hava detayları (nem, rüzgar) */
+.weather-details {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 30px;
+}
+
+.humidity, .wind {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Tahmin container ve kartları */
+.forecast-container {
+    padding: 20px;
+}
+
+.forecast-container h3 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 1.8rem;
+    color: var(--text-secondary);
+}
+
+.forecast-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
+}
+
+.forecast-item {
+    background: var(--glass-bg);
+    padding: 20px;
+    border-radius: var(--border-radius);
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.forecast-item:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow);
+}
+
+/* Tahmin kartı içerikleri */
+.forecast-time {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.forecast-temp {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin: 10px 0;
+}
+
+.forecast-desc {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    text-transform: capitalize;
+}
+
+/* Tahmin kartlarındaki ikonlar */
+.forecast-item i {
+    font-size: 2.5rem;
+    margin: 15px 0;
+    animation: pulse 2s infinite;
+}
+
+/* Arkaplan animasyonu */
+.bg-animation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.bg-animation li {
+    position: absolute;
+    display: block;
+    list-style: none;
+    width: 20px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    animation: float 25s linear infinite;
+    bottom: -150px;
+    border-radius: 50%;
+}
+
+/* Responsive tasarım - Mobil cihazlar için */
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    .search-box {
+        flex-direction: column;
+    }
+
+    .weather-details {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    #temperature {
+        font-size: 3rem;
+    }
+
+    .forecast-items {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .forecast-item i {
+        font-size: 2rem;
+    }
+}
+
+/* Responsive tasarım - Çok küçük ekranlar için */
+@media (max-width: 480px) {
+    .forecast-items {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Animasyonlar */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.15);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        transform: translateY(-1000px) rotate(720deg);
+        opacity: 0;
+    }
+} 

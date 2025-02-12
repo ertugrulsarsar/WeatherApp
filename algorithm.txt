@@ -1,0 +1,45 @@
+HAVA DURUMU UYGULAMASI
+
+1. PROJE YAPISI
+---------------
+- HTML: Sayfa yapısı ve içerik organizasyonu
+- CSS: Modern stil ve animasyonlar (Glassmorphism tasarım)
+- JavaScript: API entegrasyonu ve dinamik içerik
+- API: OpenWeatherMap (Anlık ve tahmin verileri)
+
+2. ÇALIŞMA MANTIĞI
+------------------
+1. Başlangıç Durumu:
+   - Sadece arama kutusu görünür
+   - Diğer alanlar gizli
+
+2. Veri Akışı:
+   a) Kullanıcı şehir adı girer (Enter/Buton)
+   b) API'den veriler çekilir:
+      - Anlık hava durumu
+      - 3 saatlik tahminler
+   c) Veriler işlenir ve gösterilir:
+      - Sıcaklık, nem, rüzgar
+      - Hava durumu ikonu
+      - 5 adet 3'er saatlik tahmin
+
+3. Hata Yönetimi:
+   - Boş/geçersiz şehir kontrolü
+   - API hata kontrolü
+   - Kullanıcı bilgilendirme
+
+3. GÖRSEL ÖZELLİKLER
+--------------------
+- Responsive tasarım
+- Animasyonlu geçişler
+- Font Awesome ikonları
+- Arkaplan animasyonu
+- Glassmorphism efekti
+
+4. GELİŞTİRME PLANI
+-------------------
+- Konum bazlı otomatik hava durumu
+- Sıcaklık birimi değiştirme
+- Haftalık tahmin görünümü
+- Gece/gündüz modu
+- Son aranan şehirleri kaydetme 
