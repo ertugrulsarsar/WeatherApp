@@ -3,12 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hava Durumu</title>
+    <meta name="description" content="Modern ve kullanıcı dostu hava durumu uygulaması. Anlık hava durumu ve 3 saatlik tahminler için OpenWeatherMap API kullanır.">
+    <meta name="keywords" content="hava durumu, weather, tahmin, sıcaklık, nem, rüzgar, Türkiye">
+    <meta name="author" content="Ertuğrul Sarsar">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph Meta Etiketleri -->
+    <meta property="og:title" content="Hava Durumu Uygulaması">
+    <meta property="og:description" content="Modern ve kullanıcı dostu hava durumu uygulaması">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="tr_TR">
+    
+    <!-- Twitter Card Meta Etiketleri -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Hava Durumu Uygulaması">
+    <meta name="twitter:description" content="Modern ve kullanıcı dostu hava durumu uygulaması">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌤️</text></svg>">
+    
+    <title>Hava Durumu Uygulaması - Modern Hava Tahmini</title>
 
     <!-- 
         Google Fonts - Poppins
         Modern ve temiz görünüm için Poppins fontunu kullanıyoruz
         weight: 400 (normal), 500 (medium), 600 (semi-bold), 700 (bold)
+        display=swap ile font yükleme performansını artırıyoruz
     -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     
@@ -19,16 +39,24 @@
         Font Awesome - İkonlar için
         Hava durumu ikonları ve diğer UI elementleri için kullanıyoruz
         Ücretsiz ve yaygın kullanılan bir ikon kütüphanesi
+        integrity ve crossorigin ile güvenlik artırılıyor
     -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" 
+          integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" 
+          crossorigin="anonymous" referrerpolicy="no-referrer">
+    
+    <!-- Preload kritik kaynaklar -->
+    <link rel="preload" href="style.css" as="style">
+    <link rel="preload" href="script.js" as="script">
 </head>
 <body>
     <!-- 
         Arkaplan Animasyonu
         Sayfa arkasında hareket eden parçacıklar için
         CSS animasyonları ile hareketli arka plan efekti
+        aria-hidden ile ekran okuyucularından gizleniyor
     -->
-    <ul class="bg-animation">
+    <ul class="bg-animation" aria-hidden="true">
         <li></li>
         <li></li>
         <li></li>
@@ -40,8 +68,9 @@
         Ana İçerik Konteyneri
         Tüm hava durumu bilgilerini içeren ana bölüm
         Glassmorphism efekti ile modern görünüm
+        role="main" ile ana içerik olarak işaretleniyor
     -->
-    <div class="container">
+    <main class="container" role="main">
         <!-- Sayfa Başlığı -->
         <h1>Hava Durumu</h1>
         
@@ -49,52 +78,106 @@
             Arama Bölümü
             Şehir arama input'u ve arama butonu
             Enter tuşu ile de arama yapılabilir
+            Form yapısı ile daha iyi erişilebilirlik
         -->
-        <div class="search-box">
-            <input type="text" id="city" placeholder="Şehir adı girin...">
-            <button onclick="getWeather()">Ara</button>
-        </div>
+        <form class="search-box" role="search" aria-label="Şehir arama">
+            <input 
+                type="text" 
+                id="city" 
+                name="city"
+                placeholder="Şehir adı girin..." 
+                aria-label="Şehir adı"
+                autocomplete="off"
+                spellcheck="false"
+                required
+            >
+            <button 
+                type="submit" 
+                aria-label="Hava durumu ara"
+                title="Hava durumu bilgilerini getir"
+            >
+                Ara
+            </button>
+        </form>
 
         <!-- 
             Hava Durumu Bilgileri
             Başlangıçta gizli, arama sonrası görünür
             Animasyonlu geçiş efekti ile gösterilir
+            aria-live ile dinamik içerik güncellemeleri
         -->
-        <div class="weather-box">
+        <section class="weather-box" aria-live="polite" aria-label="Anlık hava durumu">
             <!-- Hava durumu ikonu için konteyner -->
-            <div id="lottie-container"></div>
+            <div id="lottie-container" aria-hidden="true"></div>
             
             <!-- Detaylı hava durumu bilgileri -->
             <div class="weather-info">
-                <h2 id="cityName"></h2>
-                <div id="temperature"></div>
-                <div id="description"></div>
+                <h2 id="cityName" aria-label="Şehir adı"></h2>
+                <div id="temperature" aria-label="Sıcaklık"></div>
+                <div id="description" aria-label="Hava durumu açıklaması"></div>
+                
                 <!-- Nem ve rüzgar bilgileri -->
-                <div class="weather-details">
-                    <div class="humidity">
+                <div class="weather-details" role="group" aria-label="Hava durumu detayları">
+                    <div class="humidity" role="group" aria-label="Nem bilgisi">
                         <span>Nem</span>
-                        <span id="humidity"></span>
+                        <span id="humidity" aria-label="Nem oranı"></span>
                     </div>
-                    <div class="wind">
+                    <div class="wind" role="group" aria-label="Rüzgar bilgisi">
                         <span>Rüzgar</span>
-                        <span id="wind"></span>
+                        <span id="wind" aria-label="Rüzgar hızı"></span>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
         <!-- 
             3 Saatlik Tahminler
             Sonraki 15 saat için 3'er saatlik tahminler
             Grid yapısı ile responsive tasarım
+            aria-live ile dinamik içerik güncellemeleri
         -->
-        <div class="forecast-container">
+        <section class="forecast-container" aria-live="polite" aria-label="3 saatlik tahminler">
             <h3>3 Saatlik Tahminler</h3>
-            <div id="forecast" class="forecast-items"></div>
-        </div>
+            <div id="forecast" class="forecast-items" role="list" aria-label="Tahmin listesi"></div>
+        </section>
+    </main>
+
+    <!-- 
+        Footer - Geliştirici bilgileri
+        Küçük ve şık footer bölümü
+    -->
+    <footer style="position: fixed; bottom: 10px; right: 10px; color: rgba(255,255,255,0.6); font-size: 0.8rem; z-index: 10;">
+        <span>🌤️ Ertuğrul Sarsar</span>
+    </footer>
+
+    <!-- 
+        Loading Spinner (Başlangıçta gizli)
+        API çağrıları sırasında gösterilecek
+    -->
+    <div id="loading-spinner" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; color: white; font-size: 2rem;">
+        <i class="fas fa-spinner fa-spin"></i>
     </div>
 
     <!-- Ana JavaScript dosyamız - Tüm fonksiyonlar burada -->
     <script src="script.js"></script>
+    
+    <!-- 
+        Service Worker Kaydı (Gelecekte PWA için)
+        Offline çalışma ve cache yönetimi için hazırlık
+    -->
+    <script>
+        // Service Worker kaydı (gelecekte PWA için)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch(registrationError => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+    </script>
 </body>
 </html>
