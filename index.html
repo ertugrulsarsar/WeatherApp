@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="description" content="Modern hava durumu uygulaması">
     <meta name="keywords" content="hava durumu, weather, tahmin, sıcaklık">
     <meta name="author" content="Weather App">
@@ -30,25 +30,31 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer">
     
     <!-- Preload critical resources -->
+    <link rel="preload" href="config.js" as="script">
     <link rel="preload" href="script.js" as="script">
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="min-h-screen overflow-x-hidden">
     <!-- Welcome Screen -->
     <div class="welcome-screen" id="welcomeScreen">
-        <div class="welcome-icon floating-animation">🌤️</div>
-        <h1 class="welcome-title text-white">Hava Durumu</h1>
-        <p class="welcome-subtitle text-white/80">Şehrinizin hava durumunu keşfedin</p>
-        
-        <div class="welcome-search">
-            <div class="macos-search px-6 py-4 w-full">
-                <div class="flex items-center space-x-4">
-                    <svg class="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                    </svg>
-                    <input type="text" placeholder="Şehir adı girin (örn: İstanbul, Ankara, İzmir)" class="bg-transparent text-primary placeholder-secondary flex-1 outline-none text-lg" id="welcomeCitySearch">
-                    <button onclick="searchFromWelcome()" class="macos-button px-6 py-3 text-primary font-medium text-lg">
-                        Ara
+        <div class="welcome-content">
+            <div class="welcome-icon floating-animation">🌤️</div>
+            <h1 class="welcome-title">Hava Durumu</h1>
+            <p class="welcome-subtitle">Şehrinizin hava durumunu keşfedin</p>
+            
+            <div class="welcome-search">
+                <div class="modern-search-container">
+                    <div class="search-input-group">
+                        <input type="text" placeholder="Şehir adı girin (örn: İstanbul," class="modern-search-input" id="welcomeCitySearch">
+                        <button onclick="searchFromWelcome()" class="modern-search-button">
+                            Ara
+                        </button>
+                    </div>
+                    <button onclick="getLocationFromWelcome()" class="modern-location-button" title="Mevcut konumumu kullan">
+                        <svg class="location-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
                     </button>
                 </div>
             </div>
@@ -60,15 +66,36 @@
         <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="themeIcon">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
         </svg>
-    </div>
+        </div>
 
     <!-- Main Weather App -->
     <div class="container mx-auto px-6 py-6 max-w-7xl h-screen flex flex-col" id="mainApp" style="display: none;">
         <!-- Style Header -->
         <header class="mb-6">
             <div class="flex justify-center items-center">
-                <div class="text-center">
+                <div class="text-center mb-4">
                     <h1 class="text-3xl font-semibold text-white mb-2">Hava Durumu</h1>
+                </div>
+            </div>
+            
+            <!-- Search Bar -->
+            <div class="flex justify-center">
+                <div class="macos-search px-4 py-3 w-96">
+                    <div class="flex items-center space-x-3">
+                        <svg class="w-4 h-4 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                        <input type="text" placeholder="Şehir ara..." class="bg-transparent text-primary placeholder-secondary flex-1 outline-none text-sm" id="mainCitySearch">
+                        <button onclick="searchFromMain()" class="macos-button px-4 py-2 text-sm text-primary font-medium">
+                            Ara
+                        </button>
+                        <button onclick="getLocationFromMain()" class="macos-button p-2 text-primary" title="Mevcut konumumu kullan">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </div>
         </header>
@@ -177,7 +204,7 @@
                 </div>
             </div>
         </div>
-    </div>
+        </div>
 
     <!-- Loading Spinner -->
     <div class="loading-spinner" id="loadingSpinner" aria-hidden="true">
@@ -188,6 +215,7 @@
     <div class="toast-container" id="toastContainer" aria-live="polite"></div>
 
     <!-- Scripts -->
+    <script src="config.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

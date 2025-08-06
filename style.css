@@ -5,7 +5,7 @@
             font-family: 'SF Pro Display', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         }
         
-        :root {
+:root {
             --bg-gradient-light: linear-gradient(135deg, #74b9ff 0%, #0984e3 50%, #6c5ce7 100%);
             --bg-gradient-dark: linear-gradient(135deg, #2d3436 0%, #636e72 50%, #2d3436 100%);
             --card-bg-light: rgba(255, 255, 255, 0.85);
@@ -22,6 +22,18 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             transition: background 0.5s ease;
+            /* Mobile optimizations */
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
         
         body.dark-mode {
@@ -70,6 +82,26 @@
         .macos-search:focus-within {
             transform: scale(1.02);
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Input optimizations for mobile */
+        input, textarea, select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            border-radius: 0;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent zoom on iOS */
+        @media screen and (-webkit-min-device-pixel-ratio: 0) {
+            input, textarea, select {
+                font-size: 16px;
+            }
         }
         
         .macos-button {
@@ -191,13 +223,21 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: var(--bg-gradient-light);
+            background: #2c3e50; /* Koyu gri arka plan */
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 1000;
             transition: all 0.5s ease;
+            padding: 2rem;
+            box-sizing: border-box;
+        }
+        
+        .welcome-content {
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
         }
         
         .dark-mode .welcome-screen {
@@ -221,6 +261,7 @@
             font-weight: 300;
             margin-bottom: 1rem;
             text-align: center;
+            color: white;
         }
         
         .welcome-subtitle {
@@ -228,12 +269,86 @@
             opacity: 0.8;
             margin-bottom: 3rem;
             text-align: center;
+            color: rgba(255, 255, 255, 0.8);
         }
         
         .welcome-search {
             width: 100%;
             max-width: 500px;
             margin: 0 auto;
+            margin-top: 2rem;
+        }
+        
+        /* Modern Search Container */
+        .modern-search-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+        }
+        
+        .search-input-group {
+            display: flex;
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .modern-search-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 16px 20px;
+            color: white;
+            font-size: 16px;
+            outline: none;
+        }
+        
+        .modern-search-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .modern-search-button {
+            background: #34495e;
+            color: white;
+            border: none;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 4px;
+        }
+        
+        .modern-search-button:hover {
+            background: #4a5f7a;
+            transform: translateY(-1px);
+        }
+        
+        .modern-location-button {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .modern-location-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+        
+        .location-icon {
+            width: 20px;
+            height: 20px;
+            color: white;
         }
         
         .loading-spinner {
@@ -332,25 +447,507 @@
             transform: scale(1.1);
         }
         
+        /* Responsive Design - Tablet */
         @media (max-width: 1024px) {
             .grid-cols-12 {
-                grid-template-columns: 1fr;
-                gap: 1rem;
+                grid-template-columns: 1fr !important;
+                gap: 1rem !important;
             }
             
             .col-span-5, .col-span-4, .col-span-3 {
-                grid-column: span 1;
+                grid-column: span 1 !important;
+                width: 100% !important;
+            }
+            
+            /* Welcome Screen - Tablet */
+            .welcome-icon {
+                font-size: 6rem;
+                margin-bottom: 1.5rem;
             }
             
             .welcome-title {
                 font-size: 2rem;
+                margin-bottom: 0.75rem;
             }
             
             .welcome-subtitle {
                 font-size: 1rem;
+                margin-bottom: 2rem;
             }
             
             .welcome-search {
                 max-width: 90%;
             }
+            
+            .modern-search-container {
+                gap: 8px;
+            }
+            
+            .modern-search-input {
+                padding: 14px 16px;
+                font-size: 14px;
+            }
+            
+            .modern-search-button {
+                padding: 14px 20px;
+                font-size: 14px;
+            }
+            
+            .modern-location-button {
+                padding: 14px;
+            }
+            
+            .location-icon {
+                width: 18px;
+                height: 18px;
+            }
+            
+            .macos-search {
+                width: 90% !important;
+                max-width: 400px;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
         }
+        
+        /* Responsive Design - Mobile Large */
+        @media (max-width: 768px) {
+            /* Grid düzenini zorla */
+            .grid-cols-12 {
+                grid-template-columns: 1fr !important;
+                gap: 1rem !important;
+            }
+            
+            .col-span-5, .col-span-4, .col-span-3 {
+                grid-column: span 1 !important;
+                width: 100% !important;
+                margin-bottom: 1rem;
+            }
+            
+            /* İçerik taşmasını önle */
+            .macos-card {
+                overflow: hidden;
+                word-wrap: break-word;
+            }
+            
+            /* Hava durumu detayları için daha küçük font */
+            .text-7xl {
+                font-size: 3rem !important;
+            }
+            
+            .text-3xl {
+                font-size: 1.5rem !important;
+            }
+            
+            .text-2xl {
+                font-size: 1.25rem !important;
+            }
+            
+            .text-lg {
+                font-size: 1rem !important;
+            }
+            
+            .text-sm {
+                font-size: 0.875rem !important;
+            }
+            
+            .text-xs {
+                font-size: 0.75rem !important;
+            }
+            
+            /* Grid boşluklarını azalt */
+            .grid {
+                gap: 0.5rem !important;
+            }
+            
+            .space-y-3 > * + * {
+                margin-top: 0.5rem !important;
+            }
+            
+            .space-y-4 > * + * {
+                margin-top: 0.75rem !important;
+            }
+            
+            .space-y-6 > * + * {
+                margin-top: 1rem !important;
+            }
+            
+            /* Welcome Screen - Mobile Large */
+            .welcome-screen {
+                justify-content: flex-start;
+                padding-top: 3rem;
+                padding: 1rem;
+            }
+            
+            .welcome-icon {
+                font-size: 4rem;
+                margin-bottom: 1rem;
+            }
+            
+            .welcome-title {
+                font-size: 1.5rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .welcome-subtitle {
+                font-size: 0.9rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .welcome-search {
+                max-width: 95%;
+                padding: 0.75rem;
+            }
+            
+            .modern-search-container {
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .search-input-group {
+                width: 100%;
+            }
+            
+            .modern-search-input {
+                padding: 12px 16px;
+                font-size: 14px;
+            }
+            
+            .modern-search-button {
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+            
+            .modern-location-button {
+                padding: 12px;
+                align-self: center;
+            }
+            
+            .location-icon {
+                width: 18px;
+                height: 18px;
+            }
+            
+            .macos-search {
+                width: 95% !important;
+                max-width: 350px;
+                padding: 0.75rem;
+            }
+            
+            .macos-card {
+                padding: 1rem;
+            }
+            
+            .container {
+                padding: 0.5rem;
+            }
+            
+            .theme-toggle {
+                top: 10px;
+                right: 10px;
+                width: 40px;
+                height: 40px;
+            }
+            
+            .toast-container {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+            }
+            
+            .toast {
+                margin-bottom: 0.5rem;
+                padding: 0.75rem;
+            }
+        }
+        
+        /* Responsive Design - Mobile Small */
+        @media (max-width: 480px) {
+            /* Grid düzenini zorla */
+            .grid-cols-12 {
+                grid-template-columns: 1fr !important;
+                gap: 0.5rem !important;
+            }
+            
+            .col-span-5, .col-span-4, .col-span-3 {
+                grid-column: span 1 !important;
+                width: 100% !important;
+                margin-bottom: 0.5rem;
+            }
+            
+            /* Daha küçük fontlar */
+            .text-7xl {
+                font-size: 2.5rem !important;
+            }
+            
+            .text-3xl {
+                font-size: 1.25rem !important;
+            }
+            
+            .text-2xl {
+                font-size: 1.125rem !important;
+            }
+            
+            .text-lg {
+                font-size: 0.9rem !important;
+            }
+            
+            .text-sm {
+                font-size: 0.8rem !important;
+            }
+            
+            .text-xs {
+                font-size: 0.7rem !important;
+            }
+            
+            /* Hava durumu ikonu küçült */
+            .weather-icon {
+                font-size: 4rem !important;
+            }
+            
+            /* Padding'leri azalt */
+            .macos-card {
+                padding: 0.5rem !important;
+            }
+            
+            /* Grid boşluklarını daha da azalt */
+            .grid {
+                gap: 0.25rem !important;
+            }
+            
+            .space-y-3 > * + * {
+                margin-top: 0.25rem !important;
+            }
+            
+            .space-y-4 > * + * {
+                margin-top: 0.5rem !important;
+            }
+            
+            .space-y-6 > * + * {
+                margin-top: 0.75rem !important;
+            }
+            
+            /* Welcome Screen - Mobile Small */
+            .welcome-screen {
+                justify-content: flex-start;
+                padding-top: 2rem;
+                padding: 0.75rem;
+            }
+            
+            .welcome-icon {
+                font-size: 3rem;
+                margin-bottom: 0.75rem;
+            }
+            
+            .welcome-title {
+                font-size: 1.25rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .welcome-subtitle {
+                font-size: 0.8rem;
+                margin-bottom: 1rem;
+            }
+            
+            .welcome-search {
+                max-width: 100%;
+                padding: 0.5rem;
+            }
+            
+            .macos-search {
+                width: 100% !important;
+                max-width: none;
+                padding: 0.5rem;
+            }
+            
+            .macos-card {
+                padding: 0.75rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .container {
+                padding: 0.25rem;
+            }
+            
+            .weather-icon {
+                font-size: 3rem;
+            }
+            
+            .text-7xl {
+                font-size: 2.5rem;
+            }
+            
+            .text-3xl {
+                font-size: 1.5rem;
+            }
+            
+            .text-2xl {
+                font-size: 1.25rem;
+            }
+            
+            .text-lg {
+                font-size: 1rem;
+            }
+            
+            .text-sm {
+                font-size: 0.875rem;
+            }
+            
+            .text-xs {
+                font-size: 0.75rem;
+            }
+            
+            .grid {
+                gap: 0.5rem;
+            }
+            
+            .space-y-3 > * + * {
+                margin-top: 0.5rem;
+            }
+            
+            .space-y-4 > * + * {
+                margin-top: 0.75rem;
+            }
+            
+            .space-y-6 > * + * {
+                margin-top: 1rem;
+            }
+        }
+        
+        /* Responsive Design - Extra Small Mobile */
+        @media (max-width: 360px) {
+            /* Grid düzenini zorla */
+            .grid-cols-12 {
+                grid-template-columns: 1fr !important;
+                gap: 0.25rem !important;
+            }
+            
+            .col-span-5, .col-span-4, .col-span-3 {
+                grid-column: span 1 !important;
+                width: 100% !important;
+                margin-bottom: 0.25rem;
+            }
+            
+            /* Welcome Screen - Extra Small Mobile */
+            .welcome-screen {
+                justify-content: flex-start;
+                padding-top: 1.5rem;
+                padding: 0.5rem;
+            }
+            
+            .welcome-icon {
+                font-size: 2.5rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .welcome-title {
+                font-size: 1rem;
+                margin-bottom: 0.25rem;
+            }
+            
+            .welcome-subtitle {
+                font-size: 0.75rem;
+                margin-bottom: 0.75rem;
+            }
+            
+            .macos-card {
+                padding: 0.5rem;
+            }
+            
+            .weather-icon {
+                font-size: 2.5rem;
+            }
+            
+            .text-7xl {
+                font-size: 2rem;
+            }
+            
+            .text-3xl {
+                font-size: 1.25rem;
+            }
+            
+            .text-2xl {
+                font-size: 1rem;
+            }
+            
+            .text-lg {
+                font-size: 0.875rem;
+            }
+            
+            .text-sm {
+                font-size: 0.75rem;
+            }
+            
+            .text-xs {
+                font-size: 0.625rem;
+            }
+            
+            /* Grid boşluklarını minimum yap */
+            .grid {
+                gap: 0.125rem !important;
+            }
+            
+            .space-y-3 > * + * {
+                margin-top: 0.125rem !important;
+            }
+            
+            .space-y-4 > * + * {
+                margin-top: 0.25rem !important;
+            }
+            
+            .space-y-6 > * + * {
+                margin-top: 0.5rem !important;
+            }
+        }
+        
+        /* Landscape Orientation */
+        @media (max-height: 500px) and (orientation: landscape) {
+            /* Welcome Screen - Landscape */
+            .welcome-icon {
+                font-size: 3rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .welcome-title {
+                font-size: 1.5rem;
+                margin-bottom: 0.25rem;
+            }
+            
+            .welcome-subtitle {
+                font-size: 0.8rem;
+                margin-bottom: 0.75rem;
+            }
+            
+            .welcome-search {
+                max-width: 60%;
+            }
+            
+            .welcome-screen {
+                padding: 1rem;
+            }
+            
+            .container {
+                padding: 0.5rem;
+            }
+            
+            .macos-card {
+                padding: 0.75rem;
+            }
+        }
+        
+        /* High DPI Displays */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .macos-card {
+                border-width: 0.5px;
+            }
+            
+            .macos-search {
+                border-width: 0.5px;
+            }
+            
+            .macos-button {
+                border-width: 0.5px;
+            }
+        } 

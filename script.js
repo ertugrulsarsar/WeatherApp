@@ -4,9 +4,8 @@
     OpenWeatherMap API entegrasyonu
 */
 
-// API Anahtarı - Gerçek projede environment variable kullanın
-const API_KEY = '777b5f48d997639e538d0d2d2fd2678a';
-const API_BASE_URL = 'https://api.openweathermap.org/data/2.5';
+// Configuration - config.js dosyasından alınır
+const API_BASE_URL = window.WEATHER_CONFIG?.API_BASE_URL || '/api/weather';
 
 // Hava Durumu İkonları Sınıfı
 class WeatherIcons {
@@ -133,16 +132,25 @@ class WeatherUtils {
 
 // API İşlemleri Sınıfı
 class WeatherAPI {
-    constructor(apiKey) {
-        this.apiKey = apiKey;
-        this.baseUrl = API_BASE_URL;
+    constructor() {
+        // API anahtarı artık server-side'da, client'ta gerekli değil
+        this.baseUrl = API_BASE_URL || '/api/weather';
     }
     
     async makeRequest(endpoint, params = {}) {
-        const url = new URL(`${this.baseUrl}${endpoint}`);
-        url.searchParams.append('appid', this.apiKey);
-        url.searchParams.append('units', 'metric'); // Celsius için
-        url.searchParams.append('lang', 'tr');
+        // Input sanitization
+        if (window.WEATHER_CONFIG?.SANITIZE_INPUT) {
+            Object.keys(params).forEach(key => {
+                if (typeof params[key] === 'string') {
+                    params[key] = this.sanitizeInput(params[key]);
+                }
+            });
+        }
+        
+        // Proxy endpoint kullan - çift slash'ı önle
+        const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
+        const baseUrl = this.baseUrl || '/api/weather';
+        const url = new URL(`${baseUrl}/${cleanEndpoint}`, window.location.origin);
         
         // Ek parametreleri ekle
         Object.entries(params).forEach(([key, value]) => {
@@ -150,7 +158,9 @@ class WeatherAPI {
         });
         
         try {
-            const response = await fetch(url.toString());
+            const response = await fetch(url.toString(), {
+                timeout: window.WEATHER_CONFIG?.API_TIMEOUT || 10000
+            });
             
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -161,6 +171,11 @@ class WeatherAPI {
             console.error('API isteği hatası:', error);
             throw new Error('Hava durumu bilgileri alınamadı. Lütfen tekrar deneyin.');
         }
+    }
+    
+    sanitizeInput(input) {
+        // XSS koruması
+        return input.replace(/[<>]/g, '');
     }
     
     async getCurrentWeather(city) {
@@ -180,9 +195,8 @@ class WeatherAPI {
     }
     
     async getAirQuality(lat, lon) {
-        // OpenWeatherMap Air Quality API - HTTPS kullan
-        const url = new URL('https://api.openweathermap.org/data/2.5/air_pollution');
-        url.searchParams.append('appid', this.apiKey);
+        // Proxy endpoint kullan
+        const url = new URL('/api/air-quality', window.location.origin);
         url.searchParams.append('lat', lat);
         url.searchParams.append('lon', lon);
         
@@ -192,10 +206,9 @@ class WeatherAPI {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
             const data = await response.json();
-            console.log('🌬️ Hava kalitesi verisi:', data);
             return data;
         } catch (error) {
-            console.error('Hava kalitesi API hatası:', error);
+            console.error('Hava kalitesi API hatası:', error.message);
             // Fallback veri döndür
             return this.getFallbackAirQuality();
         }
@@ -356,6 +369,7 @@ class WeatherUI {
             welcomeScreen: WeatherUtils.safeQuerySelector('#welcomeScreen'),
             welcomeCitySearch: WeatherUtils.safeQuerySelector('#welcomeCitySearch'),
             mainApp: WeatherUtils.safeQuerySelector('#mainApp'),
+            mainCitySearch: WeatherUtils.safeQuerySelector('#mainCitySearch'),
             
             // Anlık hava durumu elementleri
             currentCity: WeatherUtils.safeQuerySelector('#currentCity'),
@@ -401,11 +415,34 @@ class WeatherUI {
                 }
             });
         }
+        
+        // Main app search
+        if (this.elements.mainCitySearch) {
+            this.elements.mainCitySearch.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    this.triggerMainSearch();
+                }
+            });
+        }
     }
     
     triggerWelcomeSearch() {
         console.log('🔍 Welcome screen arama tetiklendi');
         const city = this.elements.welcomeCitySearch?.value?.trim();
+        
+    if (!city) {
+            this.showError('Lütfen bir şehir adı girin');
+        return;
+    }
+
+        if (window.weatherApp) {
+            window.weatherApp.searchWeather(city);
+        }
+    }
+    
+    triggerMainSearch() {
+        console.log('🔍 Main app arama tetiklendi');
+        const city = this.elements.mainCitySearch?.value?.trim();
         
         if (!city) {
             this.showError('Lütfen bir şehir adı girin');
@@ -454,8 +491,6 @@ class WeatherUI {
     }
     
     displayWeather(data) {
-        console.log('🌤️ Hava durumu verisi alındı:', data);
-        
         if (!data || !data.main) {
             console.error('❌ Geçersiz hava durumu verisi');
             return;
@@ -463,8 +498,8 @@ class WeatherUI {
         
         const weatherType = data.weather[0]?.main || 'Clear';
         const weatherIcon = WeatherIcons.getIcon(weatherType);
-        
-        // DOM güncellemeleri
+    
+    // DOM güncellemeleri
         if (this.elements.currentCity) {
             this.elements.currentCity.textContent = data.name;
         }
@@ -510,8 +545,6 @@ class WeatherUI {
         
         // Tarih ve saat güncelleme
         this.updateDateTime();
-        
-        console.log('🎉 Hava durumu başarıyla gösterildi!');
     }
     
     displayHourlyForecast(forecastData) {
@@ -537,8 +570,6 @@ class WeatherUI {
                 </div>
             `;
         }).join('');
-        
-        console.log('✅ Saatlik tahmin güncellendi');
     }
     
     displayDailyForecast(forecastData) {
@@ -576,8 +607,6 @@ class WeatherUI {
                 </div>
             `;
         }).join('');
-        
-        console.log('✅ Günlük tahmin güncellendi');
     }
     
     displayAirQuality(airData) {
@@ -603,15 +632,6 @@ class WeatherUI {
         this.elements.pm10.textContent = `${Math.round(components.pm10)} μg/m³`;
         this.elements.ozone.textContent = `${Math.round(components.o3)} μg/m³`;
         this.elements.no2.textContent = `${Math.round(components.no2)} μg/m³`;
-        
-        console.log('✅ Hava kalitesi güncellendi:', {
-            aqi: aqi,
-            status: status.status,
-            pm25: components.pm2_5,
-            pm10: components.pm10,
-            o3: components.o3,
-            no2: components.no2
-        });
     }
     
     groupDailyData(forecastData) {
@@ -653,17 +673,21 @@ class WeatherUI {
 // Ana Uygulama Sınıfı
 class WeatherApp {
     constructor() {
-        this.api = new WeatherAPI(API_KEY);
+        // API anahtarı kontrolü - config yüklenene kadar bekle
+        this.api = null;
         this.ui = new WeatherUI();
         this.isLoading = false;
         this.recentSearches = this.loadRecentSearches();
+        this.initialized = false;
     }
     
     async searchWeather(city) {
-        console.log('🔍 Hava durumu aranıyor:', city);
+        if (!this.initialized || !this.api) {
+            this.ui.showError('Uygulama henüz başlatılmadı. Lütfen bekleyin.');
+            return;
+        }
         
         if (this.isLoading) {
-            console.log('⏳ Zaten yükleniyor...');
             return;
         }
         
@@ -671,15 +695,10 @@ class WeatherApp {
             this.isLoading = true;
             this.ui.showLoading(true);
             
-            console.log('📡 API istekleri gönderiliyor...');
-            
             const [currentWeather, forecast] = await Promise.all([
                 this.api.getCurrentWeather(city),
                 this.api.getForecast(city)
             ]);
-            
-            console.log('🌤️ Anlık hava durumu:', currentWeather);
-            console.log('📅 Tahmin verisi:', forecast);
         
             // Verileri göster
             this.ui.displayWeather(currentWeather);
@@ -717,6 +736,12 @@ class WeatherApp {
     }
     
     async searchWeatherByCoords(lat, lon) {
+        if (!this.initialized || !this.api) {
+            console.error('❌ Uygulama henüz başlatılmadı!');
+            this.ui.showError('Uygulama henüz başlatılmadı. Lütfen bekleyin.');
+            return;
+        }
+        
         try {
             this.isLoading = true;
             this.ui.showLoading(true);
@@ -769,21 +794,21 @@ class WeatherApp {
     }
     
     init() {
-        console.log('🌤️ macOS Weather App başlatıldı');
-        
         // Global erişim için
         window.weatherApp = this;
         
-        // API anahtarı kontrolü
-        if (API_KEY === 'YOUR_API_KEY_HERE') {
-            console.warn('⚠️ Lütfen geçerli bir OpenWeatherMap API anahtarı ekleyin!');
-            this.ui.showError('API anahtarı eksik. Lütfen geçerli bir API anahtarı ekleyin.');
+        // API'yi başlat (artık API anahtarı gerekli değil)
+        try {
+            this.api = new WeatherAPI();
+            this.initialized = true;
+        } catch (error) {
+            console.error('❌ API başlatma hatası:', error.message);
+            this.ui.showError('API başlatılamadı: ' + error.message);
+            return;
         }
         
         // Tema ikonunu güncelle
         this.ui.themeManager.updateThemeIcon();
-        
-        console.log('✅ Uygulama başarıyla başlatıldı');
     }
 }
 
@@ -792,8 +817,107 @@ function searchFromWelcome() {
     const cityInput = document.getElementById('welcomeCitySearch');
     const cityName = cityInput.value.trim();
     
-    if (cityName && window.weatherApp) {
+    if (!cityName) {
+        if (window.weatherApp) {
+            window.weatherApp.ui.showError('Lütfen bir şehir adı girin');
+        }
+        return;
+    }
+    
+    if (window.weatherApp && window.weatherApp.initialized) {
         window.weatherApp.searchWeather(cityName);
+    } else {
+        // 1 saniye sonra tekrar dene
+        setTimeout(() => {
+            if (window.weatherApp && window.weatherApp.initialized) {
+                window.weatherApp.searchWeather(cityName);
+            } else {
+                if (window.weatherApp) {
+                    window.weatherApp.ui.showError('Uygulama henüz hazır değil. Lütfen bekleyin.');
+                }
+            }
+        }, 1000);
+    }
+}
+
+function searchFromMain() {
+    const cityInput = document.getElementById('mainCitySearch');
+    const cityName = cityInput.value.trim();
+    
+    if (!cityName) {
+        if (window.weatherApp) {
+            window.weatherApp.ui.showError('Lütfen bir şehir adı girin');
+        }
+        return;
+    }
+    
+    if (window.weatherApp && window.weatherApp.initialized) {
+        window.weatherApp.searchWeather(cityName);
+    } else {
+        // 1 saniye sonra tekrar dene
+        setTimeout(() => {
+            if (window.weatherApp && window.weatherApp.initialized) {
+                window.weatherApp.searchWeather(cityName);
+            } else {
+                if (window.weatherApp) {
+                    window.weatherApp.ui.showError('Uygulama henüz hazır değil. Lütfen bekleyin.');
+                }
+            }
+        }, 1000);
+    }
+}
+
+async function getLocationFromWelcome() {
+    if (!window.weatherApp) {
+        return;
+    }
+    
+    if (!window.weatherApp.initialized) {
+        setTimeout(() => {
+            if (window.weatherApp && window.weatherApp.initialized) {
+                getLocationFromWelcome();
+            } else {
+                window.weatherApp.ui.showError('Uygulama henüz hazır değil. Lütfen bekleyin.');
+            }
+        }, 1000);
+        return;
+    }
+    
+    try {
+        window.weatherApp.ui.showLoading(true);
+        const coords = await LocationService.getCurrentLocation();
+        await window.weatherApp.searchWeatherByCoords(coords.lat, coords.lon);
+    } catch (error) {
+        window.weatherApp.ui.showError(error.message);
+    } finally {
+        window.weatherApp.ui.showLoading(false);
+    }
+}
+
+async function getLocationFromMain() {
+    if (!window.weatherApp) {
+        return;
+    }
+    
+    if (!window.weatherApp.initialized) {
+        setTimeout(() => {
+            if (window.weatherApp && window.weatherApp.initialized) {
+                getLocationFromMain();
+            } else {
+                window.weatherApp.ui.showError('Uygulama henüz hazır değil. Lütfen bekleyin.');
+            }
+        }, 1000);
+        return;
+    }
+    
+    try {
+        window.weatherApp.ui.showLoading(true);
+        const coords = await LocationService.getCurrentLocation();
+        await window.weatherApp.searchWeatherByCoords(coords.lat, coords.lon);
+    } catch (error) {
+        window.weatherApp.ui.showError(error.message);
+    } finally {
+        window.weatherApp.ui.showLoading(false);
     }
 }
 
@@ -803,10 +927,11 @@ function toggleTheme() {
     }
 }
 
-// Uygulama Başlatma
+// Uygulama Başlatma - config.js tarafından yönetilir
 document.addEventListener('DOMContentLoaded', () => {
-    const app = new WeatherApp();
-    app.init();
+    // WeatherApp instance'ını oluştur ama başlatma
+    // config.js tarafından başlatılacak
+    window.weatherApp = new WeatherApp();
     
     // Otomatik yenileme (5 dakikada bir)
     setInterval(() => {
