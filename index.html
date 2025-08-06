@@ -3,181 +3,191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Modern ve kullanıcı dostu hava durumu uygulaması. Anlık hava durumu ve 3 saatlik tahminler için OpenWeatherMap API kullanır.">
-    <meta name="keywords" content="hava durumu, weather, tahmin, sıcaklık, nem, rüzgar, Türkiye">
-    <meta name="author" content="Ertuğrul Sarsar">
+    <meta name="description" content="Modern hava durumu uygulaması - macOS tarzı tasarım">
+    <meta name="keywords" content="hava durumu, weather, tahmin, sıcaklık">
+    <meta name="author" content="Weather App">
     <meta name="robots" content="index, follow">
     
-    <!-- Open Graph Meta Etiketleri -->
-    <meta property="og:title" content="Hava Durumu Uygulaması">
-    <meta property="og:description" content="Modern ve kullanıcı dostu hava durumu uygulaması">
+    <!-- Open Graph -->
+    <meta property="og:title" content="Modern Hava Durumu Uygulaması">
+    <meta property="og:description" content="macOS tarzı modern hava durumu uygulaması">
     <meta property="og:type" content="website">
-    <meta property="og:locale" content="tr_TR">
     
-    <!-- Twitter Card Meta Etiketleri -->
+    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Hava Durumu Uygulaması">
-    <meta name="twitter:description" content="Modern ve kullanıcı dostu hava durumu uygulaması">
+    <meta name="twitter:title" content="Modern Hava Durumu Uygulaması">
+    <meta name="twitter:description" content="macOS tarzı modern hava durumu uygulaması">
+    
+    <title>Weather - macOS Style</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌤️</text></svg>">
     
-    <title>Hava Durumu Uygulaması - Modern Hava Tahmini</title>
-
-    <!-- 
-        Google Fonts - Poppins
-        Modern ve temiz görünüm için Poppins fontunu kullanıyoruz
-        weight: 400 (normal), 500 (medium), 600 (semi-bold), 700 (bold)
-        display=swap ile font yükleme performansını artırıyoruz
-    -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Ana stil dosyamız - Tüm CSS tanımlamaları burada -->
-    <link rel="stylesheet" href="style.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer">
     
-    <!-- 
-        Font Awesome - İkonlar için
-        Hava durumu ikonları ve diğer UI elementleri için kullanıyoruz
-        Ücretsiz ve yaygın kullanılan bir ikon kütüphanesi
-        integrity ve crossorigin ile güvenlik artırılıyor
-    -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" 
-          integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" 
-          crossorigin="anonymous" referrerpolicy="no-referrer">
-    
-    <!-- Preload kritik kaynaklar -->
-    <link rel="preload" href="style.css" as="style">
+    <!-- Preload critical resources -->
     <link rel="preload" href="script.js" as="script">
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <!-- 
-        Arkaplan Animasyonu
-        Sayfa arkasında hareket eden parçacıklar için
-        CSS animasyonları ile hareketli arka plan efekti
-        aria-hidden ile ekran okuyucularından gizleniyor
-    -->
-    <ul class="bg-animation" aria-hidden="true">
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-    </ul>
-
-    <!-- 
-        Ana İçerik Konteyneri
-        Tüm hava durumu bilgilerini içeren ana bölüm
-        Glassmorphism efekti ile modern görünüm
-        role="main" ile ana içerik olarak işaretleniyor
-    -->
-    <main class="container" role="main">
-        <!-- Sayfa Başlığı -->
-        <h1>Hava Durumu</h1>
+<body class="min-h-screen overflow-x-hidden">
+    <!-- Welcome Screen -->
+    <div class="welcome-screen" id="welcomeScreen">
+        <div class="welcome-icon floating-animation">🌤️</div>
+        <h1 class="welcome-title text-white">Hava Durumu</h1>
+        <p class="welcome-subtitle text-white/80">Şehrinizin hava durumunu keşfedin</p>
         
-        <!-- 
-            Arama Bölümü
-            Şehir arama input'u ve arama butonu
-            Enter tuşu ile de arama yapılabilir
-            Form yapısı ile daha iyi erişilebilirlik
-        -->
-        <form class="search-box" role="search" aria-label="Şehir arama">
-            <input 
-                type="text" 
-                id="city" 
-                name="city"
-                placeholder="Şehir adı girin..." 
-                aria-label="Şehir adı"
-                autocomplete="off"
-                spellcheck="false"
-                required
-            >
-            <button 
-                type="submit" 
-                aria-label="Hava durumu ara"
-                title="Hava durumu bilgilerini getir"
-            >
-                Ara
-            </button>
-        </form>
+        <div class="welcome-search">
+            <div class="macos-search px-6 py-4 w-full">
+                <div class="flex items-center space-x-4">
+                    <svg class="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <input type="text" placeholder="Şehir adı girin (örn: İstanbul, Ankara, İzmir)" class="bg-transparent text-primary placeholder-secondary flex-1 outline-none text-lg" id="welcomeCitySearch">
+                    <button onclick="searchFromWelcome()" class="macos-button px-6 py-3 text-primary font-medium text-lg">
+                        Ara
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        <!-- 
-            Hava Durumu Bilgileri
-            Başlangıçta gizli, arama sonrası görünür
-            Animasyonlu geçiş efekti ile gösterilir
-            aria-live ile dinamik içerik güncellemeleri
-        -->
-        <section class="weather-box" aria-live="polite" aria-label="Anlık hava durumu">
-            <!-- Hava durumu ikonu için konteyner -->
-            <div id="lottie-container" aria-hidden="true"></div>
-            
-            <!-- Detaylı hava durumu bilgileri -->
-            <div class="weather-info">
-                <h2 id="cityName" aria-label="Şehir adı"></h2>
-                <div id="temperature" aria-label="Sıcaklık"></div>
-                <div id="description" aria-label="Hava durumu açıklaması"></div>
-                
-                <!-- Nem ve rüzgar bilgileri -->
-                <div class="weather-details" role="group" aria-label="Hava durumu detayları">
-                    <div class="humidity" role="group" aria-label="Nem bilgisi">
-                        <span>Nem</span>
-                        <span id="humidity" aria-label="Nem oranı"></span>
+    <!-- Theme Toggle -->
+    <div class="theme-toggle" onclick="toggleTheme()" id="themeToggle">
+        <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="themeIcon">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+        </svg>
+    </div>
+
+    <!-- Main Weather App -->
+    <div class="container mx-auto px-6 py-6 max-w-7xl h-screen flex flex-col" id="mainApp" style="display: none;">
+        <!-- Style Header -->
+        <header class="mb-6">
+            <div class="flex justify-center items-center">
+                <div class="text-center">
+                    <h1 class="text-3xl font-semibold text-white mb-2">Hava Durumu</h1>
+                </div>
+            </div>
+        </header>
+
+        <!-- macOS Style Single Screen Layout -->
+        <div class="flex-1 grid grid-cols-12 gap-6">
+            <!-- Current Weather - Left Column -->
+            <div class="col-span-5">
+                <div class="macos-card p-8 h-full flex flex-col">
+                    <!-- Location and Time -->
+                    <div class="mb-6">
+                        <h2 class="text-3xl font-semibold text-primary mb-1" id="currentCity"></h2>
+                        <p class="text-secondary text-sm" id="currentDate">Bugün, 15 Aralık 2024</p>
+                        <p class="text-tertiary text-xs mt-1" id="lastUpdate">Son güncelleme: 14:30</p>
                     </div>
-                    <div class="wind" role="group" aria-label="Rüzgar bilgisi">
-                        <span>Rüzgar</span>
-                        <span id="wind" aria-label="Rüzgar hızı"></span>
+                    
+                    <!-- Main Weather Display -->
+                    <div class="flex items-center justify-between mb-8">
+                        <div class="weather-icon text-8xl floating-animation" id="weatherIcon">⛅</div>
+                        <div class="text-right">
+                            <div class="text-7xl font-thin text-primary mb-2" id="currentTemp">22°</div>
+                            <p class="text-secondary text-lg" id="weatherDesc">Parçalı Bulutlu</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Weather Details Grid -->
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="text-center">
+                            <div class="text-tertiary text-sm mb-1">Hissedilen</div>
+                            <div class="text-primary font-semibold text-xl" id="feelsLike">25°</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-tertiary text-sm mb-1">Nem</div>
+                            <div class="text-primary font-semibold text-xl" id="humidity">65%</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-tertiary text-sm mb-1">Rüzgar</div>
+                            <div class="text-primary font-semibold text-xl" id="windSpeed">12 km/h</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-tertiary text-sm mb-1">Basınç</div>
+                            <div class="text-primary font-semibold text-xl" id="pressure">1013 hPa</div>
+                        </div>
+                    </div>
+
+                    <!-- Sun Times -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="text-center">
+                            <div class="text-tertiary text-sm mb-1">Gündoğumu</div>
+                            <div class="text-primary font-medium" id="sunrise">🌅 07:24</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-tertiary text-sm mb-1">Günbatımı</div>
+                            <div class="text-primary font-medium" id="sunset">🌇 17:18</div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </section>
 
-        <!-- 
-            3 Saatlik Tahminler
-            Sonraki 15 saat için 3'er saatlik tahminler
-            Grid yapısı ile responsive tasarım
-            aria-live ile dinamik içerik güncellemeleri
-        -->
-        <section class="forecast-container" aria-live="polite" aria-label="3 saatlik tahminler">
-            <h3>3 Saatlik Tahminler</h3>
-            <div id="forecast" class="forecast-items" role="list" aria-label="Tahmin listesi"></div>
-        </section>
-    </main>
+            <!-- Hourly Forecast - Middle Column -->
+            <div class="col-span-4">
+                <div class="macos-card p-6 h-full">
+                    <h3 class="text-lg font-semibold text-primary mb-4">Saatlik Tahmin</h3>
+                    <div class="space-y-3 overflow-y-auto scroll-container" style="max-height: calc(100% - 60px);" id="hourlyForecast">
+                        <!-- Hourly items will be generated by JavaScript -->
+                    </div>
+                </div>
+            </div>
 
-    <!-- 
-        Footer - Geliştirici bilgileri
-        Küçük ve şık footer bölümü
-    -->
-    <footer style="position: fixed; bottom: 10px; right: 10px; color: rgba(255,255,255,0.6); font-size: 0.8rem; z-index: 10;">
-        <span>🌤️ Ertuğrul Sarsar</span>
-    </footer>
+            <!-- Daily Forecast & Air Quality - Right Column -->
+            <div class="col-span-3 space-y-6">
+                <!-- 5-Day Forecast -->
+                <div class="macos-card p-6">
+                    <h3 class="text-lg font-semibold text-primary mb-4">5 Günlük Tahmin</h3>
+                    <div class="space-y-3" id="dailyForecast">
+                        <!-- Daily items will be generated by JavaScript -->
+                    </div>
+                </div>
 
-    <!-- 
-        Loading Spinner (Başlangıçta gizli)
-        API çağrıları sırasında gösterilecek
-    -->
-    <div id="loading-spinner" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; color: white; font-size: 2rem;">
-        <i class="fas fa-spinner fa-spin"></i>
+                <!-- Air Quality -->
+                <div class="macos-card p-6">
+                    <h3 class="text-lg font-semibold text-primary mb-4">Hava Kalitesi</h3>
+                    <div class="air-moderate rounded-2xl p-4 mb-4 text-center">
+                        <div class="text-3xl font-bold mb-1" id="aqiValue">68</div>
+                        <p class="text-sm opacity-90" id="aqiStatus">Orta Kalite</p>
+                        <p class="text-xs opacity-75 mt-1">Hassas kişiler dikkatli olmalı</p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 text-sm">
+                        <div class="text-center">
+                            <div class="text-tertiary text-xs mb-1">PM2.5</div>
+                            <div class="text-primary font-semibold" id="pm25">25 μg/m³</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-tertiary text-xs mb-1">PM10</div>
+                            <div class="text-primary font-semibold" id="pm10">45 μg/m³</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-tertiary text-xs mb-1">O₃</div>
+                            <div class="text-primary font-semibold" id="ozone">78 μg/m³</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-tertiary text-xs mb-1">NO₂</div>
+                            <div class="text-primary font-semibold" id="no2">32 μg/m³</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Ana JavaScript dosyamız - Tüm fonksiyonlar burada -->
+    <!-- Loading Spinner -->
+    <div class="loading-spinner" id="loadingSpinner" aria-hidden="true">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+    <!-- Scripts -->
     <script src="script.js"></script>
-    
-    <!-- 
-        Service Worker Kaydı (Gelecekte PWA için)
-        Offline çalışma ve cache yönetimi için hazırlık
-    -->
-    <script>
-        // Service Worker kaydı (gelecekte PWA için)
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(registration => {
-                        console.log('SW registered: ', registration);
-                    })
-                    .catch(registrationError => {
-                        console.log('SW registration failed: ', registrationError);
-                    });
-            });
-        }
-    </script>
 </body>
 </html>
