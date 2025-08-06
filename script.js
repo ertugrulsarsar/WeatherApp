@@ -1,5 +1,5 @@
 /*
-    macOS Weather App - JavaScript
+    Weather App - JavaScript
     Yeni tasarım ile entegre edilmiş
     OpenWeatherMap API entegrasyonu
 */
